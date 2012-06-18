@@ -20,11 +20,12 @@ void wignerd_cf_from_cl(int s1, int s2, int nfunc, int ntheta, int lmax, const d
 void wignerd_cl_from_cf(int s1, int s2, int nfunc, int ntheta, int lmax, const double *cos_theta, const double *integration_weights, double *out_cl, const double *in_cf);
 
 // plenslike.c
+double calc_plenslike_mono( plenslike_dat_mono *dat, double *clpp );
+double calc_plenslike_mono_renorm( plenslike_dat_mono *dat, double *clpp, double *cltt, double *bl );
+
 void fill_qe_plm_resp_plm_mono( int lmax, double *resp, double *cltt_fid, double *bl_fid, double *fl, double *cltt, double *bl);
 void fill_plenslike_mono_bins( plenslike_dat_mono *dat, double *clpp, double *bins );
 
 void load_plenslike_dat_mono( plenslike_dat_mono *dat, char *tfname );
 void free_plenslike_dat_mono( plenslike_dat_mono *dat );
 
-double calc_plenslike_mono( plenslike_dat_mono *dat, double *clpp );
-double calc_plenslike_mono_renorm( plenslike_dat_mono *dat, double *clpp, double *cltt, double *bl );
