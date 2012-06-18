@@ -72,7 +72,7 @@ void fill_qe_plm_resp_plm_mono( int lmax, double *resp, double *cltt_fid, double
   int i, l, ngl;
   double fbl, *glz, *glw;
   double *c11, *c10, *c01, *c00;
-  double *z11p, *z11m, *z10p, *z10m, *z01p, *z01m, *z00p;
+  double *z11p, *z11m, *z10p, *z10m, *z01p, *z00p;
   double *ztp, *ztm, *ctp, *ctm;
 
   ngl = (3*lmax)/2 + 1;
@@ -96,12 +96,12 @@ void fill_qe_plm_resp_plm_mono( int lmax, double *resp, double *cltt_fid, double
 
   z11p = malloc( ngl*sizeof(double) ); z11m = malloc( ngl*sizeof(double) );
   z10p = malloc( ngl*sizeof(double) ); z10m = malloc( ngl*sizeof(double) );
-  z01p = malloc( ngl*sizeof(double) ); z01m = malloc( ngl*sizeof(double) );
+  z01p = malloc( ngl*sizeof(double) );
   z00p = malloc( ngl*sizeof(double) );
 
   wignerd_cf_from_cl(1, 1, 1, ngl, lmax, glz, z11p, c11); wignerd_cf_from_cl(1, -1, 1, ngl, lmax, glz, z11m, c11);
   wignerd_cf_from_cl(0, 1, 1, ngl, lmax, glz, z10p, c10); wignerd_cf_from_cl(0, -1, 1, ngl, lmax, glz, z10m, c10);
-  wignerd_cf_from_cl(0, 1, 1, ngl, lmax, glz, z01p, c01); wignerd_cf_from_cl(0, -1, 1, ngl, lmax, glz, z01m, c01);
+  wignerd_cf_from_cl(0, 1, 1, ngl, lmax, glz, z01p, c01);
   wignerd_cf_from_cl(0, 0, 1, ngl, lmax, glz, z00p, c00);
 
   free(c11); free(c00); free(c10); free(c01);
@@ -112,7 +112,7 @@ void fill_qe_plm_resp_plm_mono( int lmax, double *resp, double *cltt_fid, double
     ztm[i] = z11m[i] * z00p[i] - z01p[i] * z10m[i];
   }
 
-  free(z11p); free(z00p); free(z10p); free(z01p); free(z11m); free(z10m); free(z01m);
+  free(z11p); free(z00p); free(z10p); free(z01p); free(z11m); free(z10m);
   ctp = malloc( (lmax+1)*sizeof(double) ); ctm = malloc( (lmax+1)*sizeof(double) );
 
   wignerd_cl_from_cf(1, +1, 1, ngl, lmax, glz, glw, ctp, ztp);
