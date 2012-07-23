@@ -60,7 +60,7 @@ static inline int wiginit(int s1, int s2, int ntheta, const double *cos_theta, d
 {
     double  s12sign   = ((s1+s2)%2) ? -1.0 : 1.0;
     double  prefactor = 1.0;
-    int     abs_s1 = abs(s1);
+    int     abs_s1;
     int     i, swap;
 
     if (abs(s1) > abs(s2)) {
@@ -75,7 +75,8 @@ static inline int wiginit(int s1, int s2, int ntheta, const double *cos_theta, d
 	s1 = -s1;
 	s2 = -s2;
     }
-    
+
+    abs_s1 = abs(s1);
     assert(abs_s1 <= s2);
 
     for (i = 1; i <= s2-abs_s1; i++)
