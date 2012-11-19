@@ -21,15 +21,18 @@ void free_qe(qest *qe) {
   free( qe->s12L );
 }
 
-void fill_qe_resp(int lmax, qest *qe, qest *qs, double *f1, int f1lmax, double *f2, int f2lmax, double *resp) {
+void fill_qe_resp(int lmax, double *resp, qest *qee, qest *qes, 
+		  double *f1, int f1lmax, double *f2, int f2lmax) {
   int l;
-  fill_qe_cov_helper( lmax, qe, qs, f1, f1lmax, f2, f2lmax, false, false, resp);
+  fill_qe_covn( lmax, resp, qee, qes, f1, f1lmax, f2, f2lmax, false, false);
   for (l=0; l<=lmax; l++) {
     resp[l] *= 2.0;
   }
 }
 
-void fill_qe_cov_helper(int lmax, qest *q12, qest *q34, double *c1, int c1lmax, double *c2, int c2lmax, bool switch_34, bool mult_n1_l1l2L, double *cov) {
+void fill_qe_covn(int lmax, double *covn, qest *q12, qest *q34, 
+		  double *c1, int c1lmax, double *c2, int c2lmax, 
+		  bool switch_34, bool mult_n1_l1l2L) {
 
   int i, j, tl1, tl2, tl, ip;
   int ngl, tl1min, tl2min, tl1max, tl2max;
@@ -51,7 +54,7 @@ void fill_qe_cov_helper(int lmax, qest *q12, qest *q34, double *c1, int c1lmax, 
   gp2  = malloc( ngl*sizeof(double) );
   gp12 = malloc( ngl*sizeof(double) );
 
-  memset(cov, 0, (lmax+1)*sizeof(double));
+  memset(covn, 0, (lmax+1)*sizeof(double));
   for (i=0; i < q12->ntrm; i++) {
     for (j=0; j < q34->ntrm; j++) {
       tl1min = max(abs(q12->s12L[i][0]), abs(q34->s12L[j][i34_0]));
@@ -86,7 +89,7 @@ void fill_qe_cov_helper(int lmax, qest *q12, qest *q34, double *c1, int c1lmax, 
       wignerd_cl_from_cf(q12->s12L[i][2], q34->s12L[j][2], 1, ngl, lmax, glz, glw, clL, gp12);
       
       for (tl=0; tl <= lmax; tl++) {
-	cov[tl] += 
+	covn[tl] += 
 	  clL[tl] *
 	  q12->w12L[i][2][tl] * 
 	  q34->w12L[j][2][tl] * 
