@@ -5,10 +5,9 @@ import glob
 def configuration(parent_package='',top_path=None):
     from numpy.distutils.misc_util import Configuration
     config = Configuration('plenslike',parent_package,top_path)
-    config.add_extension('_plenslike', ['plenslike/dat_mono.c',
-                                        'plenslike/dat_quad_qest.c',
-                                        'plenslike/wignerd.c',
-                                        'plenslike/qest.c',
+    config.add_extension('_plenslike', ['plenslike/qest.c', 'plenslike/wignerd.c',
+                                        'plenslike/plenslike_dat_mono.c',
+                                        'plenslike/plenslike_dat_quad.c',
                                         'plenslike/plenslike.pyf'], undef_macros=['NDEBUG'])
     return config
 

@@ -70,11 +70,8 @@ class mono():
 
         return bins
 
-
 # quad
-
-# quad_qest
-class plenslike_dat_quad_qest(ct.Structure):
+class plenslike_dat_quad(ct.Structure):
     _fields_ = [ ("nbins",         ct.c_int),
                  ("lmax",          ct.c_int),
                  ("lmaxt",         ct.c_int),
@@ -101,34 +98,42 @@ class plenslike_dat_quad_qest(ct.Structure):
                  ("qe12",          ct.POINTER(qest)),
                  ("qe34",          ct.POINTER(qest)) ]
 
-pll.load_plenslike_dat_quad_qest.argtypes   = [ ct.POINTER(plenslike_dat_quad_qest), ct.c_char_p]
-pll.free_plenslike_dat_quad_qest.argtypes   = [ ct.POINTER(plenslike_dat_quad_qest) ]
+pll.load_plenslike_dat_quad.argtypes   = [ ct.POINTER(plenslike_dat_quad), ct.c_char_p]
+pll.free_plenslike_dat_quad.argtypes   = [ ct.POINTER(plenslike_dat_quad) ]
 
-pll.fill_quad_qest_resp_pp_blfid.argtypes   = [ ct.c_int, ct.POINTER(ct.c_double), ct.POINTER(plenslike_dat_quad_qest) ]
+pll.fill_quad_resp_pp_cltt.argtypes    = [ ct.c_int, ct.POINTER(ct.c_double), ct.POINTER(plenslike_dat_quad) ]
 
+pll.calc_plenslike_quad.restype        = ct.c_double
+pll.calc_plenslike_quad_renorm_cltt.restype = ct.c_double
 
-class quad_qest():
+class quad():
     def __init__(self, fname):
-        print "plenslike:: loading quad_qest likelihood from ", fname
+        print "plenslike:: loading quad likelihood from ", fname
 
         self.fname = fname
-        self.dat = plenslike_dat_quad_qest()
-        pll.load_plenslike_dat_quad_qest( ct.byref(self.dat), fname)
+        self.dat = plenslike_dat_quad()
+        pll.load_plenslike_dat_quad( ct.byref(self.dat), fname)
 
     def __del__(self):
-        pll.free_plenslike_dat_quad_qest(self.dat)
+        pll.free_plenslike_dat_quad(self.dat)
 
-    def calc_qc_resp_pp_blfid(self, lmax, cltt):
+    def calc_qc_resp_pp_cltt(self, lmax, cltt):
+        assert( len(cltt) >= self.dat.lmaxt )
+        
         ret = np.zeros(lmax+1)
-        pll.fill_quad_qest_resp_pp_blfid( lmax, ret.ctypes.data_as(ct.POINTER(ct.c_double)),
-                                          ct.byref(self.dat), cltt.ctypes.data_as(ct.POINTER(ct.c_double)) )
+        pll.fill_quad_resp_pp_cltt( lmax, ret.ctypes.data_as(ct.POINTER(ct.c_double)),
+                                         ct.byref(self.dat), cltt.ctypes.data_as(ct.POINTER(ct.c_double)) )
         return ret
 
     def calc_like(self, clpp):
-        pass
+        assert( len(clpp) >= self.dat.lmax )
+        return pll.calc_plenslike_quad( ct.byref(self.dat),
+                                        clpp.ctypes.data_as( ct.POINTER(ct.c_double) ) )
 
-    def calc_like_renorm(self, clpp, cltt, bl):
-        pass
+    def calc_like_renorm_cltt(self, clpp, cltt):
+        assert( len(clpp) >= self.dat.lmax )
+        assert( len(cltt) >= self.dat.lmaxt )
 
-    def calc_bins_clpp(self, clpp):
-        pass
+        return pll.calc_plenslike_quad_renorm_cltt( ct.byref(self.dat),
+                                                    clpp.ctypes.data_as( ct.POINTER(ct.c_double) ),
+                                                    cltt.ctypes.data_as( ct.POINTER(ct.c_double) ) )
