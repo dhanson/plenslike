@@ -14,6 +14,11 @@ class qest(ct.Structure):
                  ("s12L", ct.POINTER( ct.POINTER(ct.c_int) )),
                  ("w12L", ct.POINTER( ct.POINTER( ct.POINTER(ct.c_double) ))) ]
 
+pll.fill_qe_resp.argtypes = [ ct.c_int, ct.POINTER(ct.c_double),
+                              ct.POINTER(qest), ct.POINTER(qest),
+                              ct.POINTER(ct.c_double), ct.c_int,
+                              ct.POINTER(ct.c_double), ct.c_int ]
+
 # mono
 class plenslike_dat_mono(ct.Structure):
     _fields_ = [ ("nbins",         ct.c_int),
@@ -32,6 +37,9 @@ class plenslike_dat_mono(ct.Structure):
 
 pll.load_plenslike_dat_mono.argtypes   = [ ct.POINTER(plenslike_dat_mono), ct.c_char_p]
 pll.free_plenslike_dat_mono.argtypes   = [ ct.POINTER(plenslike_dat_mono) ]
+pll.fill_qe_plm_resp_plm_mono.argtypes = [ ct.c_int, ct.POINTER(ct.c_double), ct.POINTER(ct.c_double),
+                                           ct.POINTER(ct.c_double), ct.POINTER(ct.c_double),
+                                           ct.POINTER(ct.c_double), ct.POINTER(ct.c_double) ]
 pll.calc_plenslike_mono.restype        = ct.c_double
 pll.calc_plenslike_mono_renorm.restype = ct.c_double
 
@@ -61,12 +69,25 @@ class mono():
                                                cltt.ctypes.data_as( ct.POINTER(ct.c_double) ),
                                                bl.ctypes.data_as(   ct.POINTER(ct.c_double) ) )
 
+    def calc_like_renorm_cltt(self, clpp, cltt):
+        bl = np.array( [self.dat.bl_fid[l] for l in xrange(0, self.dat.lmax+1)] )
+        return self.calc_like_renorm(clpp, cltt, bl)
+
+    def calc_clpp_renorm_cltt(self, clpp, cltt):
+        resp = np.zeros( len(clpp) )
+        
+        pll.fill_qe_plm_resp_plm_mono( len(resp)-1, resp.ctypes.data_as( ct.POINTER(ct.c_double) ),
+                                       self.dat.cltt_fid, self.dat.bl_fid, self.dat.fl,
+                                       cltt.ctypes.data_as( ct.POINTER(ct.c_double) ), self.dat.bl_fid )
+
+        return resp**2 / np.array( [ self.dat.al_inv[l] for l in xrange(0, len(clpp)) ] )**2 * clpp
+
     def calc_bins_clpp(self, clpp):
         bins = np.zeros( self.dat.nbins )
 
         pll.fill_plenslike_mono_bins( ct.byref(self.dat),
-                                      clpp.ctypes.data_as( ct.POINTER(ct.c_double) ),
-                                      bins.ctypes.data_as( ct.POINTER(ct.c_double) ) )
+                                      bins.ctypes.data_as( ct.POINTER(ct.c_double) ),
+                                      clpp.ctypes.data_as( ct.POINTER(ct.c_double) ) )
 
         return bins
 
@@ -101,7 +122,7 @@ class plenslike_dat_quad(ct.Structure):
 pll.load_plenslike_dat_quad.argtypes   = [ ct.POINTER(plenslike_dat_quad), ct.c_char_p]
 pll.free_plenslike_dat_quad.argtypes   = [ ct.POINTER(plenslike_dat_quad) ]
 
-pll.fill_quad_resp_pp_cltt.argtypes    = [ ct.c_int, ct.POINTER(ct.c_double), ct.POINTER(plenslike_dat_quad) ]
+pll.fill_quad_resp_pp_cltt.argtypes    = [ ct.c_int, ct.POINTER(ct.c_double), ct.POINTER(plenslike_dat_quad), ct.POINTER(ct.c_double) ]
 
 pll.calc_plenslike_quad.restype        = ct.c_double
 pll.calc_plenslike_quad_renorm_cltt.restype = ct.c_double
@@ -122,7 +143,7 @@ class quad():
         
         ret = np.zeros(lmax+1)
         pll.fill_quad_resp_pp_cltt( lmax, ret.ctypes.data_as(ct.POINTER(ct.c_double)),
-                                         ct.byref(self.dat), cltt.ctypes.data_as(ct.POINTER(ct.c_double)) )
+                                    ct.byref(self.dat), cltt.ctypes.data_as(ct.POINTER(ct.c_double)) )
         return ret
 
     def calc_like(self, clpp):
@@ -137,3 +158,16 @@ class quad():
         return pll.calc_plenslike_quad_renorm_cltt( ct.byref(self.dat),
                                                     clpp.ctypes.data_as( ct.POINTER(ct.c_double) ),
                                                     cltt.ctypes.data_as( ct.POINTER(ct.c_double) ) )
+
+    def calc_clpp_renorm_cltt(self, clpp, cltt):
+        resp = self.calc_qc_resp_pp_cltt( len(clpp)-1, cltt )
+        return resp * np.array( [ self.dat.rl_inv[l] for l in xrange(0, len(clpp)) ] ) * clpp
+
+    def calc_bins_clpp(self, clpp):
+        bins = np.zeros( self.dat.nbins )
+
+        pll.fill_plenslike_quad_bins( ct.byref(self.dat),
+                                      bins.ctypes.data_as( ct.POINTER(ct.c_double) ),
+                                      clpp.ctypes.data_as( ct.POINTER(ct.c_double) ) )
+
+        return bins

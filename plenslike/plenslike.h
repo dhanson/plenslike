@@ -66,6 +66,8 @@ void fill_qe_covn( int lmax, double *covn, qest *q12, qest *q34,
 
 void init_qe_plm( qest *qe, int lmax, double *cltt);
 void init_qe_slm( qest *qe, int lmax );
+void init_qe_mlm( qest *qe, int lmax, double *cltt, double *fbl1, double *fbl2 );
+void init_qe_nlm( qest *qe, int lmax, double *fbl1, double *fbl2 );
 
 // wignerd.c
 void init_gauss_legendre_quadrature( int n, double *x, double *w );

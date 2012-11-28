@@ -140,7 +140,7 @@ void init_qe_slm( qest *qe, int lmax) {
   qe->lmax = lmax;
 
   qe->s12L = malloc( qe->ntrm*sizeof(int *) );
-  qe->w12L = malloc( 4*sizeof(double *) );
+  qe->w12L = malloc( qe->ntrm*sizeof(double *) );
   for (i=0; i < qe->ntrm; i++) {
     qe->s12L[i] = malloc( 3*sizeof(int) );
     qe->w12L[i] = malloc( 3*sizeof(double *) );
@@ -153,5 +153,60 @@ void init_qe_slm( qest *qe, int lmax) {
 
   for (l=0; l<=lmax; l++) {
     qe->w12L[0][0][l] = 1.0; qe->w12L[0][1][l] = 1.0; qe->w12L[0][2][l] = 1.0;
+  }
+}
+
+void init_qe_mlm( qest *qe, int lmax, double *cltt, double *fbl1, double *fbl2) {
+  int i, l;
+
+  qe->ntrm = 2;
+  qe->lmax = lmax;
+
+  qe->s12L = malloc( qe->ntrm*sizeof(int *) );
+  qe->w12L = malloc( qe->ntrm*sizeof(double *) );
+  for (i=0; i < qe->ntrm; i++) {
+    qe->s12L[i] = malloc( 3*sizeof(int) );
+    qe->w12L[i] = malloc( 3*sizeof(double *) );
+    qe->w12L[i][0] = malloc( (lmax+1)*sizeof(double) );
+    qe->w12L[i][1] = malloc( (lmax+1)*sizeof(double) );
+    qe->w12L[i][2] = malloc( (lmax+1)*sizeof(double) );
+  }
+
+  qe->s12L[0][0] = 0; qe->s12L[0][1] = 0; qe->s12L[0][2] = 0;
+  qe->s12L[1][0] = 0; qe->s12L[1][1] = 0; qe->s12L[1][2] = 0;
+
+  for (l=0; l<=lmax; l++) {
+    qe->w12L[0][0][l] = cltt[l] / fbl2[l];
+    qe->w12L[0][1][l] = fbl1[l];
+    qe->w12L[0][2][l] = 1.0;
+
+    qe->w12L[0][0][l] = fbl1[l];
+    qe->w12L[0][1][l] = cltt[l] / fbl2[l];
+    qe->w12L[0][2][l] = 1.0;
+  }
+}
+
+void init_qe_nlm( qest *qe, int lmax, double *fbl1, double *fbl2) {
+  int i, l;
+
+  qe->ntrm = 1;
+  qe->lmax = lmax;
+
+  qe->s12L = malloc( qe->ntrm*sizeof(int *) );
+  qe->w12L = malloc( qe->ntrm*sizeof(double *) );
+  for (i=0; i < qe->ntrm; i++) {
+    qe->s12L[i] = malloc( 3*sizeof(int) );
+    qe->w12L[i] = malloc( 3*sizeof(double *) );
+    qe->w12L[i][0] = malloc( (lmax+1)*sizeof(double) );
+    qe->w12L[i][1] = malloc( (lmax+1)*sizeof(double) );
+    qe->w12L[i][2] = malloc( (lmax+1)*sizeof(double) );
+  }
+
+  qe->s12L[0][0] = 0; qe->s12L[0][1] = 0; qe->s12L[0][2] = 0;
+
+  for (l=0; l<=lmax; l++) {
+    qe->w12L[0][0][l] = fbl1[l];
+    qe->w12L[0][1][l] = fbl2[l];
+    qe->w12L[0][2][l] = 1.0;
   }
 }
