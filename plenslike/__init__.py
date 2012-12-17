@@ -116,6 +116,10 @@ class plenslike_dat_quad(ct.Structure):
                  ("bl2n1_fid",     ct.POINTER(ct.c_double)),
                  ("bl3n1_fid",     ct.POINTER(ct.c_double)),
                  ("bl4n1_fid",     ct.POINTER(ct.c_double)),
+                 ("fl1",           ct.POINTER(ct.c_double)),
+                 ("fl2",           ct.POINTER(ct.c_double)),
+                 ("fl3",           ct.POINTER(ct.c_double)),
+                 ("fl4",           ct.POINTER(ct.c_double)),
                  ("qe12",          ct.POINTER(qest)),
                  ("qe34",          ct.POINTER(qest)) ]
 

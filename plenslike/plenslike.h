@@ -51,6 +51,10 @@ typedef struct {
   double *bl2n1_fid;
   double *bl3n1_fid;
   double *bl4n1_fid;
+  double *fl1;
+  double *fl2;
+  double *fl3;
+  double *fl4;
   qest   *qe12;
   qest   *qe34;
 } plenslike_dat_quad;
