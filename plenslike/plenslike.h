@@ -1,13 +1,19 @@
 #include <stdbool.h>
 
+#ifndef PLENSLIKE
+#define PLENSLIKE
+
 #define min(X,Y) ((X) < (Y) ? (X) : (Y))
 #define max(X,Y) ((X) > (Y) ? (X) : (Y))
 #define min3(X,Y,Z) ( min( X, min(Y, Z) ) )
 
+#ifndef perr
 #define perr(...) do { \
     printf ("@ %s (%d): ", __FILE__, __LINE__); \
     printf (__VA_ARGS__); \
 } while (0)
+#endif
+
 
 typedef struct {
   int     ntrm;
@@ -159,3 +165,5 @@ void full_qecl_resp_pp_cls( int lmax, double *rl, plenslike_dat_qecl *dat, doubl
 
 double calc_plenslike_qecl( plenslike_dat_qecl *dat, double *clpp );
 double calc_plenslike_qecl_renorm( plenslike_dat_qecl *dat, double *clpp, double *cltt, double *clee, double *clte );
+
+#endif
