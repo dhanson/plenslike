@@ -233,12 +233,12 @@ class qecl():
         return ret
 
     def calc_like(self, clpp):
-        assert( len(clpp) >= self.dat.lmaxpp )
+        assert( len(clpp) >= self.dat.lmaxpphi )
         return pll.calc_plenslike_qecl( ct.byref(self.dat),
                                         clpp.ctypes.data_as( ct.POINTER(ct.c_double) ) )
 
     def calc_like_renorm_cltt(self, clpp, cltt, clee, clte):
-        assert( len(clpp) >= self.dat.lmaxp )
+        assert( len(clpp) >= self.dat.lmaxphi )
         assert( len(cltt) >= self.dat.lmaxcmb )
         assert( len(clee) >= self.dat.lmaxcmb )
         assert( len(clte) >= self.dat.lmaxcmb )
