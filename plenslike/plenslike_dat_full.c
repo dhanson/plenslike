@@ -63,7 +63,6 @@ int load_plenslike_dat_full( plenslike_dat_full *dat, char *tfname ) {
   dat->qe34          = malloc( dat->nx  * sizeof(int) );
 
   err = fscanf(tf, "%g %g", &dat->s4fid, &dat->s4std);
-  printf("read s4. s4 = %f, std = %f\n", dat->s4fid, dat->s4std);
   
   // read bin info
   for (i=0; i<dat->nbins; i++) {
@@ -129,7 +128,6 @@ int load_plenslike_dat_full( plenslike_dat_full *dat, char *tfname ) {
   // read n1 Lq values
   for (i=0; i<dat->n1lqbins; i++) {
     err = fscanf(tf, "%lf %lf", &dmp, &dat->n1lqs[i]);
-    printf("read n1lq err = %d i = %d dmp = %f dat = %f\n", err, i, dmp, dat->n1lqs[i]);
      if ( (err != 2) || ( dmp != i) ) {
 	perr("Error reading n1 Lq values.");
 	free_plenslike_dat_full(dat);
@@ -140,7 +138,6 @@ int load_plenslike_dat_full( plenslike_dat_full *dat, char *tfname ) {
   // read n1 Lp values
   for (i=0; i<dat->n1lpbins; i++) {
     err = fscanf(tf, "%lf %lf", &dmp, &dat->n1lps[i]);
-    printf("read n1lp err = %d i = %d dmp = %f dat = %f\n", err, i, dmp, dat->n1lps[i]);
      if ( (err != 2) || ( dmp != i) ) {
 	perr("Error reading n1 Lp values.");
 	free_plenslike_dat_full(dat);
