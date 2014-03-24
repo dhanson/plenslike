@@ -356,7 +356,7 @@ void fill_full_n1( int lmax, double *n1, plenslike_dat_full *dat, double *clpp )
   for (i=0; i<dat->n1lqbins; i++) {
     for (j=0; j<dat->n1lpbins; j++) {
       a  = floor(dat->n1lps[j]);
-      fa = clpp[(int)a];
+      fa = clpp[(int)a + 0];
       fb = clpp[(int)a + 1];
 
       n1vec[i] += dat->mat_n1[i*dat->n1lpbins + j] * (fa + (fb - fa)*(dat->n1lps[j] - a));
@@ -372,10 +372,11 @@ void fill_full_n1( int lmax, double *n1, plenslike_dat_full *dat, double *clpp )
     }
     a  = dat->n1lqs[lo];
     b  = dat->n1lqs[lo+1];
-    fa = n1vec[lo];
-    fb = n1vec[lo+1];
+    fa = n1vec[lo+0] * a*a*(a+1.)*(a+1.) * dat->qlpp_inv[(int)a];
+    fb = n1vec[lo+1] * b*b*(b+1.)*(b+1.) * dat->qlpp_inv[(int)b];
 
-    n1[l] = fa + (fb-fa)*(l-a)/(b-a);
+    n1[l]  = fa + (fb-fa)*(l-a)/(b-a);
+    n1[l] *= dat->qlpp_fid[l] / ( l*l*(l+1.)*(l+1.) );
   }
 
   free(n1vec);
