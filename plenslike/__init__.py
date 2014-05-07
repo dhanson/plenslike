@@ -299,7 +299,9 @@ pll.load_plenslike_dat_full.argtypes   = [ ct.POINTER(plenslike_dat_full), ct.c_
 pll.free_plenslike_dat_full.argtypes   = [ ct.POINTER(plenslike_dat_full) ]
 
 pll.calc_plenslike_full.restype        = ct.c_double
+pll.calc_plenslike_full_ren1.restype   = ct.c_double
 pll.calc_plenslike_full_renorm.restype = ct.c_double
+pll.calc_plenslike_full_renorm_ren1.restype = ct.c_double
 
 class full():
     def __init__(self, fname):
@@ -337,11 +339,11 @@ class full():
         return ret
 
     def calc_like(self, clpp):
-        assert( len(clpp) >= self.dat.lmaxpphi )
+        assert( len(clpp) >= self.dat.lmaxphi )
         return pll.calc_plenslike_full( ct.byref(self.dat),
                                         clpp.ctypes.data_as( ct.POINTER(ct.c_double) ) )
 
-    def calc_like_renorm_cltt(self, clpp, cltt, clee, clte):
+    def calc_like_renorm(self, clpp, cltt, clee, clte):
         assert( len(clpp) >= self.dat.lmaxphi )
         assert( len(cltt) >= self.dat.lmaxcmb )
         assert( len(clee) >= self.dat.lmaxcmb )
@@ -353,6 +355,22 @@ class full():
                                                clee.ctypes.data_as( ct.POINTER(ct.c_double) ),
                                                clte.ctypes.data_as( ct.POINTER(ct.c_double) ) )
 
+    def calc_like_ren1(self, clpp):
+        assert( len(clpp) >= self.dat.lmaxphi )
+        return pll.calc_plenslike_full_ren1( ct.byref(self.dat), clpp.ctypes.data_as( ct.POINTER(ct.c_double) ) )
+
+    def calc_like_renorm_ren1(self, clpp, cltt, clee, clte):
+        assert( len(clpp) >= self.dat.lmaxphi )
+        assert( len(cltt) >= self.dat.lmaxcmb )
+        assert( len(clee) >= self.dat.lmaxcmb )
+        assert( len(clte) >= self.dat.lmaxcmb )
+
+        return pll.calc_plenslike_full_renorm_ren1( ct.byref(self.dat),
+                                                    clpp.ctypes.data_as( ct.POINTER(ct.c_double) ),
+                                                    cltt.ctypes.data_as( ct.POINTER(ct.c_double) ),
+                                                    clee.ctypes.data_as( ct.POINTER(ct.c_double) ),
+                                                    clte.ctypes.data_as( ct.POINTER(ct.c_double) ) )
+        
     def calc_clpp_renorm(self, clpp, cltt):
         resp = self.calc_qc_resp_pp_cls( len(clpp)-1, cltt )
         return resp * np.array( [ self.dat.rlpp_inv[l] for l in xrange(0, len(clpp)) ] ) * clpp

@@ -406,12 +406,13 @@ double calc_plenslike_full_ren1( plenslike_dat_full *dat, double *clpp ) {
   double ret;
   double *bins = malloc( dat->nbins * sizeof(double) );
   double *n1pp = malloc( (dat->lmaxphi+1) * sizeof(double) );
+  double *clpp_ren1 = malloc( (dat->lmaxphi+1) * sizeof(double) );
 
   fill_full_n1( dat->lmaxphi, n1pp, dat, clpp );
   for (l=0; l<=dat->lmaxphi; l++) {
-    n1pp[l] += clpp[l] - dat->n1pp_fid[l];
+    clpp_ren1[l] = clpp[l] + dat->qlpp_inv[l] * (n1pp[l] - dat->n1pp_fid[l]);
   }
-  fill_plenslike_full_bins(dat, bins, n1pp);
+  fill_plenslike_full_bins(dat, bins, clpp_ren1);
 
   ret = 0.0;
   for (i=0; i<dat->nbins; i++) {
@@ -422,6 +423,7 @@ double calc_plenslike_full_ren1( plenslike_dat_full *dat, double *clpp ) {
 
   free(bins);
   free(n1pp);
+  free(clpp_ren1);
 
   return -0.5*ret;
 };
@@ -459,7 +461,7 @@ double calc_plenslike_full_renorm_ren1( plenslike_dat_full *dat, double *clpp, d
   int i, j, l;
   double ret;
   double *bins = malloc( dat->nbins * sizeof(double) );
-  double *clpp_renorm = malloc( (dat->lmaxphi+1) * sizeof(double) );
+  double *clpp_renorm_ren1 = malloc( (dat->lmaxphi+1) * sizeof(double) );
   double *qc_resp = malloc( (dat->lmaxphi+1) * sizeof(double) );
   double *n1pp = malloc( (dat->lmaxphi+1) * sizeof(double) );
   
@@ -467,10 +469,10 @@ double calc_plenslike_full_renorm_ren1( plenslike_dat_full *dat, double *clpp, d
   fill_full_n1( dat->lmaxphi, n1pp, dat, clpp );
 
   for (l=0; l<=dat->lmaxphi; l++) {
-    clpp_renorm[l] = qc_resp[l] * dat->qlpp_inv[l] * (clpp[l] + dat->qlpp_inv[l] * (n1pp[l] - dat->n1pp_fid[l]));
+    clpp_renorm_ren1[l] = qc_resp[l] * dat->qlpp_inv[l] * (clpp[l] + dat->qlpp_inv[l] * (n1pp[l] - dat->n1pp_fid[l]));
   }
 
-  fill_plenslike_full_bins(dat, bins, clpp_renorm);
+  fill_plenslike_full_bins(dat, bins, clpp_renorm_ren1);
 
   ret = 0.0;
   for (i=0; i<dat->nbins; i++) {
@@ -480,7 +482,7 @@ double calc_plenslike_full_renorm_ren1( plenslike_dat_full *dat, double *clpp, d
   }
 
   free(bins);
-  free(clpp_renorm);
+  free(clpp_renorm_ren1);
   free(qc_resp);
   free(n1pp);
 
