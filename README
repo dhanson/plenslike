@@ -29,3 +29,6 @@ There are multiple formats for the likelihood files, depending on how many effec
 
 * "qecl"
       This format describes a very general temperature+polarization based lens reconstruction, built from cross- and auto-spectra of a set of quadratic estimators. The estimators are specified explicitly, and can be standard, bias-hardened, etc. The filter functions are included in the estimator weights, and so not specified explicitly for this format.
+
+* "full"
+      This format is for temperature+poliarzation based lens reconstrution, similar to "qecl", but also including a pre-computed estimate of the dependence of the N1 bias on C_l^{pp}, and information on the point source correction.
