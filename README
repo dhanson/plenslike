@@ -1,9 +1,9 @@
 PLENSLIKE
 =========
 
-This is a library which contains code and data files associated with the Planck lensing likelihood. 
+This library contains Python and C code associated with the Planck lensing likelihood.
 
-Multiple likelihoods are available, based on different data cuts and band combinations. The likelihood data files are human readable, and located in the plenslike/data directory. 
+Multiple likelihoods are available, based on different data cuts and band combinations. The likelihood data files are human readable.
 
 Each likelihood file describes (at least) a choice of bins (l_{min}^{i}, l_{max}^{i}), a weight function for accumulating signal into the bins (C_l^{pp, fid.} V_l^{-1}), measured amplitudes for each bin, and an associated covariance matrix.
 
